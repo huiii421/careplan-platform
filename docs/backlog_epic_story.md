@@ -11,6 +11,7 @@
 7. E7 Reporting and Export
 8. E8 Security, Audit, and Error Handling
 9. E9 Automated Testing and CI Readiness
+10. E10 API Contract and Frontend Integration
 
 ## 2) Story Backlog Table
 
@@ -39,6 +40,12 @@
 | S21 | E9 | Unit tests for validators and dedupe | none | none | validator and dedupe rules | unit test suite | S7,S9,S10,S11 | M | P0 | Core logic coverage target met |
 | S22 | E9 | Integration tests for E2E flow | none | none | E2E assertion set | intake->generate->finalize->download | S3..S16 | M | P0 | Full happy path passes in CI |
 | S23 | E9 | CI pipeline with quality gates | none | none | lint/test gate | CI workflow tests | S21,S22 | S | P1 | PR blocked when critical tests fail |
+| S24 | E10 | Integrate OpenAPI schema generation (drf-spectacular) | add `/api/schema` and docs URLs | none | schema must build without errors | schema generation tests | S1,S18 | S | P0 | OpenAPI schema and Swagger UI available in dev |
+| S25 | E10 | Annotate core endpoints with request/response/error examples | no new business endpoint | none | docs include auth and error envelope | endpoint schema snapshot tests | S24,S3,S4,S5,S8 | M | P0 | Patients/Providers/Cases/Records documented with examples |
+| S26 | E10 | Add API versioning and contract governance rules | optional headers/version field | none | breaking changes must be flagged | schema diff checks | S24,S25 | M | P1 | Contract changes are reviewed and tracked |
+| S27 | E10 | Add frontend-friendly auth and CORS policy for local integration | auth endpoints/config behavior | none | origin allowlist and auth rules | CORS/auth integration tests | S2,S24 | M | P0 | FE dev server can call backend securely |
+| S28 | E10 | Generate typed frontend API client from OpenAPI | none public | none | generated types must match schema | type generation CI test | S25 | S | P1 | FE can consume typed API client without manual DTO drift |
+| S29 | E10 | Add OpenAPI build check to CI quality gates | none | none | schema generation required in CI | CI workflow tests for schema | S23,S24 | S | P0 | PR fails when OpenAPI generation fails |
 
 ## 3) Sprint 1 Proposal (P0 Only)
 
@@ -55,6 +62,8 @@ S1, S2, S3, S4, S5, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16, S18, S19, S21
 5. Phase 5: S12, S13, S14
 6. Phase 6: S15, S16, S19
 7. Phase 7: S21, S22
+8. Phase 8: S24, S25, S27, S29 (Swagger + FE contract baseline)
+9. Phase 9: S26, S28 (contract governance + typed client)
 
 ### Parallelization
 
@@ -63,6 +72,8 @@ S1, S2, S3, S4, S5, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16, S18, S19, S21
 3. Track C: S10/S11 (duplicate detection)
 4. Track D: S12/S13/S14 (LLM generation)
 5. Track E: S21/S22 (tests) starts as soon as upstream stories land
+6. Track F: S24/S25/S27/S29 (API contract and frontend integration)
+7. Track G: S26/S28 (contract governance and FE codegen)
 
 ## 4) Risks and Open Questions
 
@@ -73,6 +84,8 @@ S1, S2, S3, S4, S5, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16, S18, S19, S21
 5. Role/permission granularity not fully finalized.
 6. Export format priority: CSV only vs CSV + XLSX in phase 1.
 7. Patient record storage retention and deletion policy pending.
+8. API versioning strategy for FE compatibility: URL versioning vs header-based.
+9. Swagger availability policy in production: disabled vs protected internal access.
 
 ## 5) Jira Templates (Copy/Paste Ready)
 
