@@ -6,7 +6,16 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-change-me")
+# S2: Fail fast on missing critical environment variables
+_REQUIRED_ENV = ["SECRET_KEY", "DB_NAME", "DB_USER", "DB_PASSWORD", "DB_HOST"]
+_missing = [k for k in _REQUIRED_ENV if not os.getenv(k)]
+if _missing:
+    raise RuntimeError(
+        f"Missing required environment variable(s): {', '.join(_missing)}. "
+        "Check your .env file."
+    )
+
+SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "True") == "True"
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
@@ -19,6 +28,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Third party
     "rest_framework",
+    # Internal apps
+    "apps.core",
+    "apps.patients",
+    "apps.providers",
+    "apps.cases",
 ]
 
 MIDDLEWARE = [
@@ -74,6 +88,8 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    # S18: Uniform error envelope for all API responses
+    "EXCEPTION_HANDLER": "apps.core.exceptions.api_exception_handler",
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -90,3 +106,6 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
